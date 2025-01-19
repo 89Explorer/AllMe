@@ -5,6 +5,7 @@
 //  Created by 권정근 on 1/19/25.
 //
 
+
 import UIKit
 
 class OnboardingView: UIView {
