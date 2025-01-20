@@ -9,6 +9,8 @@
 import UIKit
 import FBSDKCoreKit
 import FBSDKLoginKit
+import GoogleSignIn
+
 
 class OnboardingView: UIView {
     
@@ -33,6 +35,16 @@ class OnboardingView: UIView {
         return button
     }()
     
+    private let googleLoginButton: GIDSignInButton = {
+        let button = GIDSignInButton()
+        button.layer.cornerRadius = 5
+        button.layer.masksToBounds = true
+        button.constraints.first { (constraints) -> Bool in
+            return constraints.firstAttribute == .height
+        }?.constant = 40.0
+        return button
+    }()
+    
     
     // MARK: - Life Cycle
     override init(frame: CGRect) {
@@ -49,9 +61,11 @@ class OnboardingView: UIView {
     private func configureConstraints() {
         addSubview(welcomeLabel)
         addSubview(facebookLoginButton)
+        addSubview(googleLoginButton)
         
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
-        facebookLoginButton.translatesAutoresizingMaskIntoConstraints = false 
+        facebookLoginButton.translatesAutoresizingMaskIntoConstraints = false
+        googleLoginButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             
@@ -62,7 +76,12 @@ class OnboardingView: UIView {
             facebookLoginButton.centerXAnchor.constraint(equalTo: welcomeLabel.centerXAnchor),
             facebookLoginButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 60),
             facebookLoginButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -60),
-            facebookLoginButton.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 250)
+            facebookLoginButton.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 250),
+            
+            googleLoginButton.centerXAnchor.constraint(equalTo: welcomeLabel.centerXAnchor),
+            googleLoginButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 60),
+            googleLoginButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -60),
+            googleLoginButton.topAnchor.constraint(equalTo: facebookLoginButton.bottomAnchor, constant: 10)
             
         ])
     }
@@ -70,6 +89,10 @@ class OnboardingView: UIView {
     // MARK: - Functions
     func calledFaecbookLoginButton() -> FBLoginButton {
         return facebookLoginButton
+    }
+    
+    func calledGoogleLoginButton() -> GIDSignInButton {
+        return googleLoginButton
     }
 }
 

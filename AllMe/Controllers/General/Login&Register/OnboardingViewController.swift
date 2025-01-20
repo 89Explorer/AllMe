@@ -9,6 +9,9 @@ import UIKit
 import FBSDKLoginKit
 import Combine
 import FirebaseAuth
+import GoogleSignIn
+import FirebaseCore
+
 
 class OnboardingViewController: UIViewController {
     
@@ -32,9 +35,10 @@ class OnboardingViewController: UIViewController {
         configureConstraints()
         
         onboardingView.calledFaecbookLoginButton().delegate = self
+        onboardingView.calledGoogleLoginButton().addTarget(self, action: #selector(didTapGoogleLogin), for: .touchUpInside)
         
         if let token = AccessToken.current,
-            !token.isExpired {
+           !token.isExpired {
             dismiss(animated: true)
         }
         bindView()
@@ -76,7 +80,7 @@ class OnboardingViewController: UIViewController {
             self?.showErrorAlert(message: error)
         }
         .store(in: &cancellables)
-
+        
     }
     
     // 에러를 나타내는 경고창함수
@@ -84,6 +88,36 @@ class OnboardingViewController: UIViewController {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default))
         present(alert, animated: true)
+    }
+    
+    // MARK: - Actions
+    @objc private func didTapGoogleLogin() {
+        print("didTapGoogleLogin called")
+        
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        // Start the sign in flow!
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] result, error in
+            if let error = error {
+                print("Google 로그인 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString
+            else {
+                print("토큰 실패")
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: user.accessToken.tokenString)
+            self?.viewModel.createUser(with: credential)
+        }
     }
     
 }

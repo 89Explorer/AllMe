@@ -43,7 +43,7 @@ final class AuthenticationViewModel: ObservableObject {
             .store(in: &subscription)
     }
     
-    
+    /// Firestore에 사용자 정보를 저장
     func createRecord(for user: AllMeUser) {
         DatabaseManager.shared.collectionUsers(add: user)
             .sink { [weak self] completion in

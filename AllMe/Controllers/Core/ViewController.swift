@@ -9,11 +9,18 @@ import UIKit
 import FBSDKLoginKit
 import FBSDKCoreKit
 import FirebaseAuth
+import GoogleSignIn
 
 class ViewController: UIViewController {
     
     // MARK: - Variables
-    private var hasPresentedOnboarding = false 
+    private var hasPresentedOnboarding = false
+    
+    // MARK: - UI Components
+    private var addItemButton: UIButton = {
+        let button = UIButton()
+        return button
+    }()
 
     // MARK: - Life cycle
     override func viewDidLoad() {
@@ -23,7 +30,7 @@ class ViewController: UIViewController {
         let logoutButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .plain, target: self, action: #selector(didTapLogOut))
         
         navigationItem.rightBarButtonItem = logoutButton
-        
+        navigationController?.navigationBar.tintColor = .black
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,6 +53,7 @@ class ViewController: UIViewController {
     @objc private func didTapLogOut() {
         print("didTapLogOut called")
         FBSDKLoginKit.LoginManager().logOut()
+        
         
         do {
             try FirebaseAuth.Auth.auth().signOut()
