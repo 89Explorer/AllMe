@@ -6,13 +6,35 @@
 //
 
 import UIKit
+import FBSDKCoreKit
+import FBSDKLoginKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+    // Facebook 로그인
+    // 이 코드는 앱이 시작될 때 SDK를 초기화하며, 로그인이나 공유 작업을 수행할 때
+    // SDK가 Facebook 네이티브 앱의 로그인과 공유를 처리하도록 합니다.
+    // 그렇지 않으면 사용자가 Facebook에 로그인한 상태에서만 앱 내 브라우저를 통해 로그인할 수 있습니다.
+    func scene(_ scene: UIScene,
+               openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else {
+            return
+        }
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        ApplicationDelegate.shared.application(
+            UIApplication.shared,
+            open: url,
+            sourceApplication: nil,
+            annotation: [UIApplication.OpenURLOptionsKey.annotation]
+        )
+    }
+
+    func scene(_ scene: UIScene,
+               willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
+        
         self.setupWindow(with: scene)
         let vc = ViewController()
         let nav = UINavigationController(rootViewController: vc)

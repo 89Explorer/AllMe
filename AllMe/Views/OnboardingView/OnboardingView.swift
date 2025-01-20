@@ -7,6 +7,8 @@
 
 
 import UIKit
+import FBSDKCoreKit
+import FBSDKLoginKit
 
 class OnboardingView: UIView {
     
@@ -20,6 +22,16 @@ class OnboardingView: UIView {
         return label
     }()
     
+    private let facebookLoginButton: FBLoginButton = {
+        let button = FBLoginButton()
+        button.layer.cornerRadius = 5
+        button.layer.masksToBounds = true
+        button.constraints.first { (constraints) -> Bool in
+            return constraints.firstAttribute == .height
+        }?.constant = 40.0
+        button.permissions = ["public_profile", "email"]
+        return button
+    }()
     
     
     // MARK: - Life Cycle
@@ -36,15 +48,28 @@ class OnboardingView: UIView {
     // MARK: - Layouts
     private func configureConstraints() {
         addSubview(welcomeLabel)
+        addSubview(facebookLoginButton)
         
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
+        facebookLoginButton.translatesAutoresizingMaskIntoConstraints = false 
         
         NSLayoutConstraint.activate([
             
             welcomeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25),
             welcomeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -25),
-            welcomeLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30)
+            welcomeLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
+            
+            facebookLoginButton.centerXAnchor.constraint(equalTo: welcomeLabel.centerXAnchor),
+            facebookLoginButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 60),
+            facebookLoginButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -60),
+            facebookLoginButton.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 250)
             
         ])
     }
+    
+    // MARK: - Functions
+    func calledFaecbookLoginButton() -> FBLoginButton {
+        return facebookLoginButton
+    }
 }
+
