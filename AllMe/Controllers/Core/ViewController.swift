@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import FBSDKLoginKit
+import FBSDKCoreKit
+import FirebaseAuth
 
 class ViewController: UIViewController {
     
@@ -16,6 +19,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGreen
+        
+        let logoutButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .plain, target: self, action: #selector(didTapLogOut))
+        
+        navigationItem.rightBarButtonItem = logoutButton
         
     }
     
@@ -35,6 +42,21 @@ class ViewController: UIViewController {
         }
     }
 
+    // MARK: - Actions
+    @objc private func didTapLogOut() {
+        print("didTapLogOut called")
+        FBSDKLoginKit.LoginManager().logOut()
+        
+        do {
+            try FirebaseAuth.Auth.auth().signOut()
+            let onBoardingVC = UINavigationController(rootViewController: OnboardingViewController())
+            onBoardingVC.modalPresentationStyle = .fullScreen
+            present(onBoardingVC, animated: true)
+        } catch {
+            print("Failed to log out")
+        }
+        
+    }
 
 }
 
