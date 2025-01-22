@@ -70,6 +70,7 @@ class OnboardingViewController: UIViewController {
         viewModel.$user.sink { [weak self] user in
             guard user != nil else { return }
             print("로그인 성공: \(user?.displayName ?? "사용자 이름 없음")")
+            print("로그인 성공: \(user?.photoURL?.absoluteString ?? "이미지 경로 없음")")
             self?.dismiss(animated: true)    // 로그인 성공 후 화면 닫기
         }
         .store(in: &cancellables)
@@ -91,6 +92,7 @@ class OnboardingViewController: UIViewController {
     }
     
     // MARK: - Actions
+    // Google 로그인 구현 ㅎ마수
     @objc private func didTapGoogleLogin() {
         print("didTapGoogleLogin called")
         
@@ -113,6 +115,7 @@ class OnboardingViewController: UIViewController {
                 print("토큰 실패")
                 return
             }
+            
             
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                            accessToken: user.accessToken.tokenString)

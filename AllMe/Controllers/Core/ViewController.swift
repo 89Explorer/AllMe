@@ -19,6 +19,12 @@ class ViewController: UIViewController {
     // MARK: - UI Components
     private var addItemButton: UIButton = {
         let button = UIButton()
+        let plusSign = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .bold))
+        button.setImage(plusSign, for: .normal)
+        button.layer.cornerRadius = 30
+        button.layer.masksToBounds = true
+        button.tintColor = .systemYellow
+        button.backgroundColor = .systemBackground
         return button
     }()
 
@@ -27,7 +33,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemGreen
         
+        configureConstraints()
+        
         let logoutButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .plain, target: self, action: #selector(didTapLogOut))
+        
+        addItemButton.addTarget(self, action: #selector(didTapAddItemButton), for: .touchUpInside)
         
         navigationItem.rightBarButtonItem = logoutButton
         navigationController?.navigationBar.tintColor = .black
@@ -48,6 +58,22 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: - Layouts
+    private func configureConstraints() {
+        view.addSubview(addItemButton)
+        
+        addItemButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            
+            addItemButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            addItemButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            addItemButton.heightAnchor.constraint(equalToConstant: 60),
+            addItemButton.widthAnchor.constraint(equalToConstant: 60)
+            
+        ])
+    }
 
     // MARK: - Actions
     @objc private func didTapLogOut() {
@@ -65,6 +91,14 @@ class ViewController: UIViewController {
         }
         
     }
-
+    
+    
+    @objc private func didTapAddItemButton() {
+        print("didTapAddItemButton - called")
+        let feedVC = UINavigationController(rootViewController: FeedViewController())
+        feedVC.modalPresentationStyle = .fullScreen
+        self.present(feedVC, animated: true)
+        
+    }
 }
 
