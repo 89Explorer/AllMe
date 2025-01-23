@@ -200,7 +200,6 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
         header.textLabel?.frame = CGRect(x: header.bounds.origin.x + 20, y: header.bounds.origin.y, width: 100, height: header.bounds.height)
         header.textLabel?.textColor = .label
     }
-    
 }
 
 // MARK: - Extension: ImageSelectedDelegate

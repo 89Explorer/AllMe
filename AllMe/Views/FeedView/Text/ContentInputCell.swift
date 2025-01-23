@@ -26,7 +26,7 @@ class ContentInputCell: UITableViewCell {
         textView.textAlignment = .left
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         textView.textColor = .secondaryLabel
-        textView.backgroundColor = .secondarySystemBackground
+        textView.backgroundColor = .systemBackground
         textView.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         return textView
     }()
@@ -34,6 +34,7 @@ class ContentInputCell: UITableViewCell {
     // MARK: - Life Cycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        contentView.backgroundColor = .secondarySystemBackground
         configureConstraints()
         
         contentTextView.delegate = self
@@ -68,7 +69,7 @@ class ContentInputCell: UITableViewCell {
             contentTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             contentTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             contentTextView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            contentTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            contentTextView.bottomAnchor.constraint(equalTo: contentView.keyboardLayoutGuide.topAnchor, constant: 5),
             contentTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 350)
             
         ])
