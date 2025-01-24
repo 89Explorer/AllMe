@@ -102,29 +102,39 @@ class FeedViewController: UIViewController {
     // MARK: - Actions
     @objc private func registerFeed() {
         
-        // 1) ViewModel의 userFeed에 ID 할당
+//        // 1) ViewModel의 userFeed에 ID 할당
+//        viewModel.userFeed.id = UUID().uuidString
+//        
+//        // 2) 이미지 선택 항목을 userFeed.imagePath에 반영
+//        for image in selectedImages {
+//            if let imageString = image.toString() {
+//                viewModel.userFeed.imagePath.append(imageString)
+//            }
+//        }
+//        
+//        let group = DispatchGroup()
+//        for image in selectedImages {
+//            group.enter()
+//            guard let imageString = image.toString() else {
+//                group.leave()
+//                continue
+//            }
+//            
+//            // 3) ViewModel에 저장 요청
+//            viewModel.createFeed(viewModel.userFeed)
+//            dismiss(animated: true)
+//        }
+        
+        // userFeed에 title, contents는 이미 설정된 상태
+        // selectedImages에 UIImage 배열이 들어있다고 가정
+        // ID 생성
         viewModel.userFeed.id = UUID().uuidString
         
-        // 2) 이미지 선택 항목을 userFeed.imagePath에 반영
-        for image in selectedImages {
-            if let imageString = image.toString() {
-                viewModel.userFeed.imagePath.append(imageString)
-            }
-        }
+        // ViewModel에 생성 요청
+        // userFeed는 현재 작성 중인 FeedItem, selectedImages는 이미 선택된 UIImage 목록
+        viewModel.createFeed(viewModel.userFeed, images: selectedImages)
         
-        let group = DispatchGroup()
-        for image in selectedImages {
-            group.enter()
-            guard let imageString = image.toString() else {
-                group.leave()
-                continue
-            }
-            
-            // 3) ViewModel에 저장 요청
-            viewModel.createFeed(viewModel.userFeed)
-            dismiss(animated: true)
-        }
-        
+        dismiss(animated: true)
     }
     
     @objc private func didTapBack() {
