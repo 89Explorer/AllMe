@@ -10,11 +10,14 @@ import FBSDKLoginKit
 import FBSDKCoreKit
 import FirebaseAuth
 import GoogleSignIn
+import Combine
 
 class ViewController: UIViewController {
     
     // MARK: - Variables
     private var hasPresentedOnboarding = false
+    
+    private var viewModel = FeedItemViewModel()
     
     // MARK: - UI Components
     private var addItemButton: UIButton = {
@@ -57,7 +60,10 @@ class ViewController: UIViewController {
                 self.present(onBoardingVC, animated: true)
             }
         }
+        
+        viewModel.fetchFeeds()
     }
+
     
     // MARK: - Layouts
     private func configureConstraints() {

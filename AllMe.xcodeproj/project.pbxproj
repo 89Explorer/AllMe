@@ -19,6 +19,8 @@
 		9DA1B2A82D3CA55F00ED7EE8 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 9DA1B2A72D3CA55F00ED7EE8 /* FacebookLogin */; };
 		9DA1B36B2D3EB0BB00ED7EE8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9DA1B36A2D3EB0BB00ED7EE8 /* GoogleSignIn */; };
 		9DA1B36D2D3EB0BB00ED7EE8 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9DA1B36C2D3EB0BB00ED7EE8 /* GoogleSignInSwift */; };
+		9DA59C0F2D43645200C03A1C /* FeedModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA59C0D2D43645200C03A1C /* FeedModel+CoreDataClass.swift */; };
+		9DA59C102D43645200C03A1C /* FeedModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA59C0E2D43645200C03A1C /* FeedModel+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +44,8 @@
 		9DA1B1872D3BC03200ED7EE8 /* AllMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DA1B1A02D3BC03300ED7EE8 /* AllMeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllMeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DA1B1AA2D3BC03300ED7EE8 /* AllMeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllMeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DA59C0D2D43645200C03A1C /* FeedModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedModel+CoreDataClass.swift"; sourceTree = "<group>"; };
+		9DA59C0E2D43645200C03A1C /* FeedModel+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedModel+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -115,6 +119,8 @@
 		9DA1B17E2D3BC03200ED7EE8 = {
 			isa = PBXGroup;
 			children = (
+				9DA59C0D2D43645200C03A1C /* FeedModel+CoreDataClass.swift */,
+				9DA59C0E2D43645200C03A1C /* FeedModel+CoreDataProperties.swift */,
 				9DA1B1892D3BC03200ED7EE8 /* AllMe */,
 				9DA1B1A32D3BC03300ED7EE8 /* AllMeTests */,
 				9DA1B1AD2D3BC03300ED7EE8 /* AllMeUITests */,
@@ -293,6 +299,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DA59C0F2D43645200C03A1C /* FeedModel+CoreDataClass.swift in Sources */,
+				9DA59C102D43645200C03A1C /* FeedModel+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

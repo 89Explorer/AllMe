@@ -7,16 +7,20 @@
 
 import UIKit
 import PhotosUI
+import Combine
 
 class FeedViewController: UIViewController {
     
     // MARK: - Variable
     private let tableSection: [String] = ["이미지", "제목", "내용"]
-    var selectedImages: [UIImage] = []
+    private var selectedImages: [UIImage] = []
     
+    
+    private let viewModel = FeedItemViewModel()
+    private var cancellables = Set<AnyCancellable>()
+
     
     // MARK: - UI Components
-    
     private let feedTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.separatorStyle = .none
@@ -43,8 +47,9 @@ class FeedViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureConstraints()
         setupTableViewDelegate()
+        setupBindings()
         
-        
+        registerFeedButton.addTarget(self, action: #selector(registerFeed), for: .touchUpInside)
         
         navigationItem.title = "오늘 리뷰 쓰기"
         
@@ -64,13 +69,64 @@ class FeedViewController: UIViewController {
         
         feedTableView.delegate = self
         feedTableView.dataSource = self
+        
         feedTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         feedTableView.register(ImageSelectedCell.self, forCellReuseIdentifier: ImageSelectedCell.reuseIdentifier)
         feedTableView.register(TitleInputCell.self, forCellReuseIdentifier: TitleInputCell.reuseIdentifier)
         feedTableView.register(ContentInputCell.self, forCellReuseIdentifier: ContentInputCell.reuseIdentifier)
     }
     
+    private func setupBindings() {
+        
+        // feeds 배열이 바뀌면 테이블 뷰 리로드
+        viewModel.$feeds
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.feedTableView.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        // 에러 메세지 처리를 U로 표출, print() 문으로 확인
+        viewModel.$errorMessage
+            .compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .sink { errerMessage in
+                print("Error: \(errerMessage)")
+                
+                // 추후 alert 표시
+            }
+            .store(in: &cancellables)
+    }
+    
+    
     // MARK: - Actions
+    @objc private func registerFeed() {
+        
+        // 1) ViewModel의 userFeed에 ID 할당
+        viewModel.userFeed.id = UUID().uuidString
+        
+        // 2) 이미지 선택 항목을 userFeed.imagePath에 반영
+        for image in selectedImages {
+            if let imageString = image.toString() {
+                viewModel.userFeed.imagePath.append(imageString)
+            }
+        }
+        
+        let group = DispatchGroup()
+        for image in selectedImages {
+            group.enter()
+            guard let imageString = image.toString() else {
+                group.leave()
+                continue
+            }
+            
+            // 3) ViewModel에 저장 요청
+            viewModel.createFeed(viewModel.userFeed)
+            dismiss(animated: true)
+        }
+        
+    }
+    
     @objc private func didTapBack() {
         dismiss(animated: true)
     }
@@ -159,18 +215,19 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
         case 0:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ImageSelectedCell.reuseIdentifier, for: indexPath) as? ImageSelectedCell else { return UITableViewCell() }
             cell.delegate = self
+            
             cell.selectionStyle = .none
             return cell
             
         case 1:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleInputCell.reuseIdentifier, for: indexPath) as? TitleInputCell else { return UITableViewCell()}
-            
+            cell.calledTitleTextField().delegate = self
             return cell
             
         case 2:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ContentInputCell.reuseIdentifier, for: indexPath) as? ContentInputCell else { return UITableViewCell() }
         
-            
+            cell.calledTextView().delegate = self
             return cell
             
         default:
@@ -233,6 +290,9 @@ extension FeedViewController: PHPickerViewControllerDelegate {
             item.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
                 if let image = object as? UIImage {
                     self.selectedImages.append(image)
+                    
+                    //guard let imageString = image.toString() else { return }
+                    //self.userFeed.imagePath?.append(imageString)
                 }
                 group.leave()
             }
@@ -244,5 +304,31 @@ extension FeedViewController: PHPickerViewControllerDelegate {
                 
             }
         }
+    }
+}
+
+
+// MARK: Extension: convert to UIImage to String
+extension UIImage {
+    func toString() -> String? {
+
+        //let pngData = self.pngData()
+
+        let jpegData = self.jpegData(compressionQuality: 0.75)
+
+        return jpegData?.base64EncodedString(options: .lineLength64Characters)
+    }
+}
+
+// MARK: - Extension: UITextFieldDelegate, UITextViewDelegate
+extension FeedViewController: UITextFieldDelegate, UITextViewDelegate {
+    // 제목 입력 완료 시
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        viewModel.userFeed.title = textField.text ?? ""
+    }
+    
+    // 내용 변경 시
+    func textViewDidChange(_ textView: UITextView) {
+        viewModel.userFeed.contents = textView.text
     }
 }

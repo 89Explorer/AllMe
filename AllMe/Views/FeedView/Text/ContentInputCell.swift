@@ -37,7 +37,7 @@ class ContentInputCell: UITableViewCell {
         contentView.backgroundColor = .secondarySystemBackground
         configureConstraints()
         
-        contentTextView.delegate = self
+        
          
     }
     
