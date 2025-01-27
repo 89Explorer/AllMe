@@ -42,8 +42,5 @@ class DatabaseManager {
             }
             .eraseToAnyPublisher()
     }
-    
-    
-    
-    
+
 }

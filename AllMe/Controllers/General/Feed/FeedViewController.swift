@@ -18,7 +18,7 @@ class FeedViewController: UIViewController {
     
     private let viewModel = FeedItemViewModel()
     private var cancellables = Set<AnyCancellable>()
-
+    
     
     // MARK: - UI Components
     private let feedTableView: UITableView = {
@@ -102,28 +102,6 @@ class FeedViewController: UIViewController {
     // MARK: - Actions
     @objc private func registerFeed() {
         
-//        // 1) ViewModel의 userFeed에 ID 할당
-//        viewModel.userFeed.id = UUID().uuidString
-//        
-//        // 2) 이미지 선택 항목을 userFeed.imagePath에 반영
-//        for image in selectedImages {
-//            if let imageString = image.toString() {
-//                viewModel.userFeed.imagePath.append(imageString)
-//            }
-//        }
-//        
-//        let group = DispatchGroup()
-//        for image in selectedImages {
-//            group.enter()
-//            guard let imageString = image.toString() else {
-//                group.leave()
-//                continue
-//            }
-//            
-//            // 3) ViewModel에 저장 요청
-//            viewModel.createFeed(viewModel.userFeed)
-//            dismiss(animated: true)
-//        }
         
         // userFeed에 title, contents는 이미 설정된 상태
         // selectedImages에 UIImage 배열이 들어있다고 가정
@@ -148,7 +126,7 @@ class FeedViewController: UIViewController {
     // MARK: - Layout
     private var feedTableViewBottomConstraint: NSLayoutConstraint!
     private var registerButtonTopConstraint: NSLayoutConstraint!
-
+    
     private func configureConstraints() {
         view.addSubview(feedTableView)
         view.addSubview(registerFeedButton)
@@ -179,23 +157,23 @@ class FeedViewController: UIViewController {
         setupKeyboardNotifications()
     }
     
-
+    
     private func setupKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
+    
     @objc private func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
             // 키보드가 올라오면 테이블뷰의 bottom을 키보드의 top에 맞춤
             feedTableViewBottomConstraint.constant = -keyboardFrame.height + 100
-
+            
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()
             }
         }
     }
-
+    
     @objc private func keyboardWillHide(_ notification: Notification) {
         // 키보드가 내려가면 테이블뷰의 bottom을 버튼의 top으로 복원
         feedTableViewBottomConstraint.constant = -10
@@ -203,7 +181,7 @@ class FeedViewController: UIViewController {
             self.view.layoutIfNeeded()
         }
     }
-
+    
 }
 
 // MARK: - Extension: TableView
@@ -236,7 +214,7 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
             
         case 2:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ContentInputCell.reuseIdentifier, for: indexPath) as? ContentInputCell else { return UITableViewCell() }
-        
+            
             cell.calledTextView().delegate = self
             return cell
             
@@ -300,9 +278,6 @@ extension FeedViewController: PHPickerViewControllerDelegate {
             item.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
                 if let image = object as? UIImage {
                     self.selectedImages.append(image)
-                    
-                    //guard let imageString = image.toString() else { return }
-                    //self.userFeed.imagePath?.append(imageString)
                 }
                 group.leave()
             }
@@ -317,28 +292,41 @@ extension FeedViewController: PHPickerViewControllerDelegate {
     }
 }
 
-
-// MARK: Extension: convert to UIImage to String
-extension UIImage {
-    func toString() -> String? {
-
-        //let pngData = self.pngData()
-
-        let jpegData = self.jpegData(compressionQuality: 0.75)
-
-        return jpegData?.base64EncodedString(options: .lineLength64Characters)
-    }
-}
-
 // MARK: - Extension: UITextFieldDelegate, UITextViewDelegate
 extension FeedViewController: UITextFieldDelegate, UITextViewDelegate {
+    
     // 제목 입력 완료 시
     func textFieldDidEndEditing(_ textField: UITextField) {
         viewModel.userFeed.title = textField.text ?? ""
+        
+        if ((textField.text?.isEmpty) != nil) {
+            textField.textColor = .secondaryLabel
+            textField.text = "글 제목을 입력해주세요 😀"
+        }
+        
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.textColor == .secondaryLabel {
+            textField.text = ""
+            textField.textColor = .label
+        }
     }
     
     // 내용 변경 시
     func textViewDidChange(_ textView: UITextView) {
         viewModel.userFeed.contents = textView.text
+        
+        if textView.text.isEmpty {
+            textView.textColor = .secondaryLabel
+            textView.text = "오늘 하루는 어땠나요? 😀"
+        }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == .secondaryLabel {
+            textView.text = ""
+            textView.textColor = .label
+        }
     }
 }

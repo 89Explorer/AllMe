@@ -82,7 +82,7 @@ class ViewController: UIViewController {
     private func configureTableViewDelegate() {
         homeTableView.delegate = self
         homeTableView.dataSource = self
-        homeTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        homeTableView.register(HomeTableViewCell.self, forCellReuseIdentifier: HomeTableViewCell.reuseIdentifier)
     }
     
     private func setupBindings() {
@@ -154,12 +154,24 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        let feed = viewModel.feeds[indexPath.row]
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableViewCell.reuseIdentifier, for: indexPath) as? HomeTableViewCell else { return UITableViewCell() }
         
-        cell.textLabel?.text = feed.title
+        // 1) 현재 피드 아이템
+        let feedItem = viewModel.feeds[indexPath.row]
         
-        return cell
+        // 2) 저장된 이미 경로 가져오기
+        let paths = feedItem.imagePath
+        
+        // 3) FileManager에서 이미지 불러오기
+        let images = FeedStorageManager.shared.loadImages(from: paths)
+        
+        // 4) 여러 장 중 첫 번째 이미지를 대표로 사용
+        guard let firstImage = images.first ?? UIImage(systemName: "photo") else { return UITableViewCell() }
+        
+        // 5) 셀 구성
+        cell.configureTableView(feedItem: feedItem, image: firstImage)
+        
+        return cell 
     }
 }

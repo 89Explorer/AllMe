@@ -116,7 +116,6 @@ class OnboardingViewController: UIViewController {
                 return
             }
             
-            
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                            accessToken: user.accessToken.tokenString)
             self?.viewModel.createUser(with: credential)

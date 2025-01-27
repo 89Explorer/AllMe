@@ -26,67 +26,6 @@ class FeedItemViewModel: ObservableObject {
     private let feedManager = FeedManager.shared
     
     
-    //    func createFeed(_ feed: FeedItem) {
-    //        feedManager.createFeed(feed)
-    //            .sink(receiveCompletion: { completion in
-    //                if case let .failure(error) = completion {
-    //                    self.errorMessage = error.localizedDescription
-    //                }
-    //            }, receiveValue: { [weak self] feed in
-    //                print("Successfully saved feed: \(feed)")
-    //                self?.feeds.append(feed)
-    //
-    //                // 저장 후, 새 피드 작성 목적으로 치고화
-    //                self?.userFeed = FeedItem(id: "")
-    //            })
-    //            .store(in: &cancellables)
-    //    }
-    //
-    //
-    //    func fetchFeeds() {
-    //        feedManager.fetchFeeds()
-    //            .receive(on: DispatchQueue.main)
-    //            .sink(receiveCompletion: { completion in
-    //                if case let .failure(error) = completion {
-    //                    self.errorMessage = error.localizedDescription
-    //                }
-    //            }, receiveValue: { [weak self] feeds in
-    //                self?.feeds = feeds
-    //                print("feed 정보: \(feeds)")
-    //            })
-    //            .store(in: &cancellables)
-    //    }
-    //
-    //
-    //    func updateFeed(_ feed: FeedItem) {
-    //        feedManager.updateFeed(feed)
-    //            .sink(receiveCompletion: { completion in
-    //                if case let .failure(error) = completion {
-    //                    self.errorMessage = error.localizedDescription
-    //                }
-    //            }, receiveValue: { [weak self] updatedFeed in
-    //                if let index = self?.feeds.firstIndex(where: { $0.id == updatedFeed.id }) {
-    //                    self?.feeds[index] = updatedFeed
-    //                }
-    //                print("Successfully updated feed: \(updatedFeed)")
-    //            })
-    //            .store(in: &cancellables)
-    //    }
-    //
-    //
-    //    func deleteFeed(by id: String) {
-    //        feedManager.deleteFeed(by: id)
-    //            .sink(receiveCompletion: { completion in
-    //                if case let .failure(error) = completion {
-    //                    self.errorMessage = error.localizedDescription
-    //                }
-    //            }, receiveValue: { [weak self] in
-    //                self?.feeds.removeAll { $0.id == id }
-    //                print("Successfully deleted feed with ID: \(id)")
-    //            })
-    //            .store(in: &cancellables)
-    //    }
-    
     // MARK: - Create
     /// images: 새로 작성된 피드에 연결될 이미지 리스트
     func createFeed(_ feed: FeedItem, images: [UIImage]) {
@@ -100,7 +39,7 @@ class FeedItemViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] savedFeed in
                 self?.feeds.append(savedFeed)
-                print("Successfully saved feed: \(savedFeed)")
+                //print("Successfully saved feed: \(savedFeed)")
                 // 작성 후 userFeed 초기화
                 self?.userFeed = FeedItem(id: "")
             })
@@ -119,7 +58,7 @@ class FeedItemViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] feeds in
                 self?.feeds = feeds
-                print("Fetched feeds: \(feeds)")
+                //print("Fetched feeds: \(feeds)")
             })
             .store(in: &cancellables)
     }
@@ -137,7 +76,7 @@ class FeedItemViewModel: ObservableObject {
                 if let index = self?.feeds.firstIndex(where: { $0.id == updatedFeed.id }) {
                     self?.feeds[index] = updatedFeed
                 }
-                print("Successfully updated feed: \(updatedFeed)")
+                //print("Successfully updated feed: \(updatedFeed)")
             })
             .store(in: &cancellables)
     }
@@ -153,7 +92,7 @@ class FeedItemViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] in
                 self?.feeds.removeAll { $0.id == id }
-                print("Successfully deleted feed with ID: \(id)")
+                //print("Successfully deleted feed with ID: \(id)")
             })
             .store(in: &cancellables)
     }
