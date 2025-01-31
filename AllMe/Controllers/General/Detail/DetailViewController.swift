@@ -37,6 +37,7 @@ class DetailViewController: UIViewController {
         let rightButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(didTapUpdate))
         
         navigationItem.rightBarButtonItem = rightButton
+        navigationController?.navigationBar.tintColor = .link
         bindView()
         
     }
@@ -76,17 +77,6 @@ class DetailViewController: UIViewController {
         navigationController?.popViewController(animated: true)
         
     }
-    
-//    func updateFeedItem() {
-//        let feedItem = viewModel.feedItem
-//        let images = viewModel.images
-//        
-//        let editVC = FeedViewController(mode: .edit(feedItem, images))
-//        let navController = UINavigationController(rootViewController: editVC)
-//        navController.modalPresentationStyle = .fullScreen
-//        present(navController, animated: true)
-//        
-//    }
     
     func updateFeedItem() {
         let feedItem = viewModel.feedItem

@@ -64,25 +64,6 @@ class ViewController: UIViewController {
         viewModel.fetchFeeds()
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        
-//        if !hasPresentedOnboarding {
-//            hasPresentedOnboarding = true
-//            
-//            let loginUser: Bool = false
-//            
-//            if !loginUser {
-//                let onBoardingVC = UINavigationController(rootViewController: OnboardingViewController())
-//                onBoardingVC.modalPresentationStyle = .fullScreen
-//                self.present(onBoardingVC, animated: true)
-//            }
-//        }
-//        
-//        viewModel.fetchFeeds()
-//    }
-    
-    
     // MARK: - Functions
     private func configureTableViewDelegate() {
         homeTableView.delegate = self

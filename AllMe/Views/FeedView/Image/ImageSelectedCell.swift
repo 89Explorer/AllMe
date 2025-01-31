@@ -178,11 +178,6 @@ extension ImageSelectedCell: UICollectionViewDelegate, UICollectionViewDataSourc
 
 
 // MARK: - Protocol
-// 이미지 선택 버튼의 액션을 전달하기 위한 Delegate 프로토콜 생성
-//protocol ImageSelectedDelegate: AnyObject {
-//    func didTappedImageSelectedButton(in cell: ImageSelectedCell)
-//    func imageAddCell(_ cell: ImageSelectedCell, didSelectImages images: [UIImage])
-//}
 
 protocol ImageSelectedDelegate: AnyObject {
     func didTappedImageSelectedButton(in cell: ImageSelectedCell)

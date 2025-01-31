@@ -130,8 +130,6 @@ class FeedViewController: UIViewController {
     }
     
     
-    
-    
     // MARK: - Actions
     @objc private func registerFeed() {
         
@@ -366,20 +364,15 @@ extension FeedViewController: PHPickerViewControllerDelegate {
             item.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
                 if let image = object as? UIImage {
                     newImages.append(image)
-                    //self.selectedImages.append(image)
+//                    self.selectedImages.append(contentsOf: newImages)
                 }
                 group.leave()
             }
         }
         
         group.notify(queue: .main) {
-            self.selectedImages = newImages // 기존 이미지 반영하지 않고, 새로운 이미지만 유지
+            self.selectedImages = newImages + self.selectedImages // 기존 이미지 반영하지 않고, 새로운 이미지만 유지
             self.feedTableView.reloadData()
-            
-//            if let cell = self.feedTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageSelectedCell {
-//                self.imageAddCell(cell, didSelectImages: self.selectedImages)
-//                
-//            }
         }
     }
 }

@@ -36,7 +36,7 @@ class DetailView: UIView {
     private let titleLabel: PaddedLabel = {
         let label = PaddedLabel()
         label.textColor = .label
-        label.backgroundColor = .systemBackground
+        label.backgroundColor = .secondarySystemBackground
         label.layer.cornerRadius = 10
         label.layer.masksToBounds = true
         label.font = .systemFont(ofSize: 16, weight: .bold)
@@ -47,7 +47,7 @@ class DetailView: UIView {
     private let contentLabel: UITextView = {
         let textView = UITextView()
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 5, bottom: 10, right: 5)
-        textView.backgroundColor = .systemBackground
+        textView.backgroundColor = .secondarySystemBackground
         textView.textAlignment = .left
         textView.layer.cornerRadius = 10
         textView.layer.masksToBounds = true
@@ -60,7 +60,7 @@ class DetailView: UIView {
     // MARK: - Life Cycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .secondarySystemBackground
+        backgroundColor = .systemBackground
         configureConstraints()
         configureDelegate()
         
@@ -125,7 +125,7 @@ class DetailView: UIView {
             
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            titleLabel.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 5),
+            titleLabel.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 15),
             titleLabel.heightAnchor.constraint(equalToConstant: 60),
             
             contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),

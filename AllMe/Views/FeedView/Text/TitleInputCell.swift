@@ -27,7 +27,7 @@ class TitleInputCell: UITableViewCell {
         
         textField.text = "글 제목을 입력해주세요 😀"
         textField.textColor = .secondaryLabel
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .secondarySystemBackground
         textField.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         return textField
     }()
@@ -36,7 +36,7 @@ class TitleInputCell: UITableViewCell {
     // MARK: - Life Cycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .secondarySystemBackground
+        contentView.backgroundColor = .systemBackground
         
         configureConstraints()
     }

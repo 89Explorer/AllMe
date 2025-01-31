@@ -6,7 +6,6 @@
 //
 
 
-
 import UIKit
 
 class ContentInputCell: UITableViewCell {
@@ -18,7 +17,7 @@ class ContentInputCell: UITableViewCell {
     private let contentTextView: UITextView = {
         let textView = UITextView()
         textView.text = "오늘 하루는 어땠나요? 😀"
-        textView.backgroundColor = .systemBackground
+        textView.backgroundColor = .secondarySystemBackground
         textView.layer.cornerRadius = 5
         textView.layer.masksToBounds = true
         
@@ -28,7 +27,6 @@ class ContentInputCell: UITableViewCell {
         textView.textAlignment = .left
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         textView.textColor = .secondaryLabel
-        textView.backgroundColor = .systemBackground
         textView.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         return textView
     }()
@@ -36,7 +34,7 @@ class ContentInputCell: UITableViewCell {
     // MARK: - Life Cycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .secondarySystemBackground
+        contentView.backgroundColor = .systemBackground
         configureConstraints()
          
     }    
