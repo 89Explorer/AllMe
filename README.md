@@ -27,10 +27,9 @@
 <p align="center">
 <img src="https://github.com/user-attachments/assets/e223cd83-ea6d-41cb-b8af-847f905de235" height="400"/>
 <img src="https://github.com/user-attachments/assets/bdf50751-d78a-403b-81d1-e47bd7c2bcf2" height="400"/>
+<img src="https://github.com/user-attachments/assets/4df5f0c9-77c0-4564-bc6d-605e2cb67ab9" height="400"/>
 <img src="https://github.com/user-attachments/assets/74c1a6ed-88a2-4f40-bd07-0e737d2b49fc" height="400"/>
-
 </p>
-
 
 
 
@@ -54,6 +53,14 @@
 ## 🛠 개발 기간
 - 개발 기간: 3주
 - 개발 인원: 1인
+
+
+## 👏🏻 회고
+AllMe는 개인 피드 관리에 최적화된 앱으로, Combine과 MVVM을 활용하여 데이터 관리를 효율적으로 수행하고 사용자 경험을 극대화하는 데 초점을 맞추어 개발되었습니다. 🚀
+
+
+
+
 
 
 
