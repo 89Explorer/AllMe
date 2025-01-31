@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 import FBSDKCoreKit
 import FBSDKLoginKit
 import GoogleSignIn
@@ -49,9 +50,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                options connectionOptions: UIScene.ConnectionOptions) {
         
         self.setupWindow(with: scene)
-        let vc = ViewController()
-        let nav = UINavigationController(rootViewController: vc)
-        self.window?.rootViewController = nav
+        checkAuthentication()
+//        let vc = ViewController()
+//        let nav = UINavigationController(rootViewController: vc)
+//        self.window?.rootViewController = nav
         
     }
     
@@ -63,6 +65,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.makeKeyAndVisible()
     }
     
+    public func checkAuthentication() {
+        if Auth.auth().currentUser == nil {
+            self.goToController(with: OnboardingViewController())
+        } else {
+            self.goToController(with: ViewController())
+        }
+    }
+    
+    private func goToController(with viewController: UIViewController) {
+        DispatchQueue.main.async { [weak self] in
+            UIView.animate(withDuration: 0.25) {
+                self?.window?.layer.opacity = 0
+            } completion: { [weak self] _ in
+                let nav = UINavigationController(rootViewController: viewController)
+                nav.modalPresentationStyle = .fullScreen
+                self?.window?.rootViewController = nav
+                
+                UIView.animate(withDuration: 0.25) {
+                    self?.window?.layer.opacity = 1
+                }
+            }
+        }
+    }
     
     
     func sceneDidDisconnect(_ scene: UIScene) {

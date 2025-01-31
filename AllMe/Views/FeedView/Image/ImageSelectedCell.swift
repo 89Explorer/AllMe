@@ -95,19 +95,39 @@ class ImageSelectedCell: UITableViewCell {
     }
     
     @objc private func deleteImage(_ sender: UIButton) {
-        print("deleteImageButton called")
         let index = sender.tag
-        
-        // 안전한 인덱스 범위 확인
+        print("deleteImageButton called at index: \(index)")
+
+        // 안전한 인덱스 확인
         guard index >= 0 && index < selectedImages.count else {
             print("삭제할 이미지가 없음")
             return
         }
-        // 이미지 삭제
-        selectedImages.remove(at: index)
+
+        let deletedImage = selectedImages.remove(at: index) // ✅ 삭제된 이미지 저장
+
+        // ✅ 삭제된 이미지가 FeedViewController로 전달됨
+        delegate?.didDeleteImage(in: self, deletedImage: deletedImage)
+
+        // UI 업데이트
         selectedImageCollectionView.reloadData()
-        print("deleteImageButton called at index: \(index)")
     }
+
+    
+//    @objc private func deleteImage(_ sender: UIButton) {
+//        print("deleteImageButton called")
+//        let index = sender.tag
+//        
+//        // 안전한 인덱스 범위 확인
+//        guard index >= 0 && index < selectedImages.count else {
+//            print("삭제할 이미지가 없음")
+//            return
+//        }
+//        // 이미지 삭제
+//        selectedImages.remove(at: index)
+//        selectedImageCollectionView.reloadData()
+//        print("deleteImageButton called at index: \(index)")
+//    }
     
     // MARK: - Layouts
     private func configureConstraints() {
@@ -148,7 +168,7 @@ extension ImageSelectedCell: UICollectionViewDelegate, UICollectionViewDataSourc
         
         
         cell.configure(with: image)
-    
+        
         cell.calledDeleteButton().tag = indexPath.row   // 삭제 버튼에 인덱스 전달
         cell.calledDeleteButton().addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
         
@@ -159,7 +179,13 @@ extension ImageSelectedCell: UICollectionViewDelegate, UICollectionViewDataSourc
 
 // MARK: - Protocol
 // 이미지 선택 버튼의 액션을 전달하기 위한 Delegate 프로토콜 생성
+//protocol ImageSelectedDelegate: AnyObject {
+//    func didTappedImageSelectedButton(in cell: ImageSelectedCell)
+//    func imageAddCell(_ cell: ImageSelectedCell, didSelectImages images: [UIImage])
+//}
+
 protocol ImageSelectedDelegate: AnyObject {
     func didTappedImageSelectedButton(in cell: ImageSelectedCell)
     func imageAddCell(_ cell: ImageSelectedCell, didSelectImages images: [UIImage])
+    func didDeleteImage(in cell: ImageSelectedCell, deletedImage: UIImage?) // 삭제된 이미지 반영
 }

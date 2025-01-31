@@ -5,6 +5,8 @@
 //  Created by 권정근 on 1/22/25.
 //
 
+
+
 import UIKit
 
 class ContentInputCell: UITableViewCell {
@@ -21,7 +23,7 @@ class ContentInputCell: UITableViewCell {
         textView.layer.masksToBounds = true
         
         // 글자 수에 따라 크기가 늘어가게 하기 위함
-        textView.isScrollEnabled = false
+        textView.isScrollEnabled = true
 
         textView.textAlignment = .left
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -36,16 +38,8 @@ class ContentInputCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .secondarySystemBackground
         configureConstraints()
-        
-        
          
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        contentTextView.text = ""
-    }
-    
+    }    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

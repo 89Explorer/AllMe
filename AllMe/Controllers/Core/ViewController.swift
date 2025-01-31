@@ -61,21 +61,26 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if !hasPresentedOnboarding {
-            hasPresentedOnboarding = true
-            
-            let loginUser: Bool = false
-            
-            if !loginUser {
-                let onBoardingVC = UINavigationController(rootViewController: OnboardingViewController())
-                onBoardingVC.modalPresentationStyle = .fullScreen
-                self.present(onBoardingVC, animated: true)
-            }
-        }
-        
         viewModel.fetchFeeds()
     }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        
+//        if !hasPresentedOnboarding {
+//            hasPresentedOnboarding = true
+//            
+//            let loginUser: Bool = false
+//            
+//            if !loginUser {
+//                let onBoardingVC = UINavigationController(rootViewController: OnboardingViewController())
+//                onBoardingVC.modalPresentationStyle = .fullScreen
+//                self.present(onBoardingVC, animated: true)
+//            }
+//        }
+//        
+//        viewModel.fetchFeeds()
+//    }
     
     
     // MARK: - Functions
@@ -113,7 +118,7 @@ class ViewController: UIViewController {
     
     @objc private func didTapAddItemButton() {
         print("didTapAddItemButton - called")
-        let feedVC = UINavigationController(rootViewController: FeedViewController())
+        let feedVC = UINavigationController(rootViewController: FeedViewController(mode: .create))
         feedVC.modalPresentationStyle = .fullScreen
         self.present(feedVC, animated: true)
         
@@ -171,7 +176,18 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         // 5) 셀 구성
         cell.configureTableView(feedItem: feedItem, image: firstImage)
+        cell.selectionStyle = .none
         
         return cell 
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let feedItem = viewModel.feeds[indexPath.row]
+        let paths = feedItem.imagePath
+        let images = FeedStorageManager.shared.loadImages(from: paths)
+        
+        let detailVC = DetailViewController(feedItem: feedItem, image: images, feedItemViewModel: viewModel)
+        navigationController?.pushViewController(detailVC, animated: true)
+    
     }
 }

@@ -12,13 +12,21 @@ import Combine
 class FeedViewController: UIViewController {
     
     // MARK: - Variable
+    private let mode: EditMode
     private let tableSection: [String] = ["이미지", "제목", "내용"]
     private var selectedImages: [UIImage] = []
     
+    // 기존 이미지를 따로 저장
+    private var existingImages: [UIImage] = []
     
     private let viewModel = FeedItemViewModel()
     private var cancellables = Set<AnyCancellable>()
     
+    // 기존 데이터를 유지하기 위해 속성 추가
+    private var existingFeedItem: FeedItem?
+    
+    // 수정 완료 후 콜백을 실행할 변수 추가
+    private var completionHandler: ((FeedItem, [UIImage]) -> Void)?
     
     // MARK: - UI Components
     private let feedTableView: UITableView = {
@@ -26,7 +34,7 @@ class FeedViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.alwaysBounceVertical = false
-        tableView.isScrollEnabled = true
+        tableView.isScrollEnabled = false
         return tableView
     }()
     
@@ -61,6 +69,29 @@ class FeedViewController: UIViewController {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapToDismiss)))
         
     }
+    
+    // 새로운 init 메서드 추가
+    init(mode: EditMode, completionHandler: ((FeedItem, [UIImage]) -> Void)? = nil) {
+        self.mode = mode
+        self.completionHandler = completionHandler
+        super.init(nibName: nil, bundle: nil)
+        
+        switch mode {
+        case .create:
+            self.navigationItem.title = "새 피드 작성"
+        case .edit(let feedItem, let images):
+            self.navigationItem.title = "피드 수정"
+            self.viewModel.userFeed = feedItem
+            self.selectedImages = images
+            self.existingFeedItem = feedItem
+        }
+    }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     
     // MARK: - Functions
@@ -99,22 +130,30 @@ class FeedViewController: UIViewController {
     }
     
     
+    
+    
     // MARK: - Actions
     @objc private func registerFeed() {
         
+        let finalImages = existingImages + selectedImages // 기존 + 새로운 이미지 유지
         
-        // userFeed에 title, contents는 이미 설정된 상태
-        // selectedImages에 UIImage 배열이 들어있다고 가정
-        // ID 생성
-        viewModel.userFeed.id = UUID().uuidString
-        
-        // ViewModel에 생성 요청
-        // userFeed는 현재 작성 중인 FeedItem, selectedImages는 이미 선택된 UIImage 목록
-        viewModel.createFeed(viewModel.userFeed, images: selectedImages)
+        switch mode {
+        case .create:
+            viewModel.userFeed.id = UUID().uuidString
+            viewModel.createFeed(viewModel.userFeed, images: finalImages)
+        case .edit(let feedItem, _):
+            viewModel.userFeed.id = feedItem.id
+            viewModel.updateFeed(viewModel.userFeed, images: finalImages)
+
+            // ✅ 이미지가 변경되었을 경우에도 반영되도록 개선
+            DispatchQueue.main.async {
+                self.completionHandler?(self.viewModel.userFeed, finalImages)
+            }
+        }
         
         dismiss(animated: true)
     }
-    
+
     @objc private func didTapBack() {
         dismiss(animated: true)
     }
@@ -204,16 +243,32 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ImageSelectedCell.reuseIdentifier, for: indexPath) as? ImageSelectedCell else { return UITableViewCell() }
             cell.delegate = self
             
+            // 기존 이미지 불러오기
+            if !selectedImages.isEmpty {
+                cell.updateImages(selectedImages)
+            }
+            
             cell.selectionStyle = .none
             return cell
             
         case 1:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleInputCell.reuseIdentifier, for: indexPath) as? TitleInputCell else { return UITableViewCell()}
+            
+            // 기존 제목 불러오기
+            if let existingTitle = existingFeedItem?.title {
+                cell.calledTitleTextField().text = existingTitle
+            }
+            
             cell.calledTitleTextField().delegate = self
             return cell
             
         case 2:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ContentInputCell.reuseIdentifier, for: indexPath) as? ContentInputCell else { return UITableViewCell() }
+            
+            // 기존 내용 불러오기
+            if let existingContent = existingFeedItem?.contents {
+                cell.calledTextView().text = existingContent
+            }
             
             cell.calledTextView().delegate = self
             return cell
@@ -249,6 +304,36 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
 
 // MARK: - Extension: ImageSelectedDelegate
 extension FeedViewController: ImageSelectedDelegate {
+    func didDeleteImage(in cell: ImageSelectedCell, deletedImage: UIImage?) {
+        guard let deletedImage = deletedImage else { return }
+
+        // ✅ 기존 이미지(`existingImages`)인지 확인 (이미 FileManager에 저장된 이미지)
+        if let index = existingImages.firstIndex(of: deletedImage) {
+            let relativePath = existingFeedItem?.imagePath[index] // 저장된 경로 가져오기
+
+            if let relativePath = relativePath {
+                // ✅ FileManager에서 삭제
+                FeedStorageManager.shared.deleteImages(from: [relativePath])
+
+                // ✅ Core Data에서 이미지 경로 제거
+                existingFeedItem?.imagePath.remove(at: index)
+            }
+
+            // ✅ 기존 이미지 배열에서 삭제
+            existingImages.remove(at: index)
+        }
+
+        // ✅ 새로운 이미지(`selectedImages`)인지 확인 (아직 저장되지 않은 이미지)
+        else if let index = selectedImages.firstIndex(of: deletedImage) {
+            selectedImages.remove(at: index)
+        }
+
+        // ✅ UI 업데이트
+        cell.updateImages(existingImages + selectedImages)
+        feedTableView.reloadData()
+    }
+
+    
     func didTappedImageSelectedButton(in cell: ImageSelectedCell) {
         var configuration = PHPickerConfiguration()
         configuration.filter = .images
@@ -272,61 +357,91 @@ extension FeedViewController: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
         
         let group = DispatchGroup()
-        selectedImages.removeAll()
+        var newImages: [UIImage] = []
+        //selectedImages.removeAll()
+        
+        
         for item in results {
             group.enter()
             item.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
                 if let image = object as? UIImage {
-                    self.selectedImages.append(image)
+                    newImages.append(image)
+                    //self.selectedImages.append(image)
                 }
                 group.leave()
             }
         }
         
         group.notify(queue: .main) {
-            if let cell = self.feedTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageSelectedCell {
-                self.imageAddCell(cell, didSelectImages: self.selectedImages)
-                
-            }
+            self.selectedImages = newImages // 기존 이미지 반영하지 않고, 새로운 이미지만 유지
+            self.feedTableView.reloadData()
+            
+//            if let cell = self.feedTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageSelectedCell {
+//                self.imageAddCell(cell, didSelectImages: self.selectedImages)
+//                
+//            }
         }
     }
 }
 
+
 // MARK: - Extension: UITextFieldDelegate, UITextViewDelegate
 extension FeedViewController: UITextFieldDelegate, UITextViewDelegate {
     
-    // 제목 입력 완료 시
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        viewModel.userFeed.title = textField.text ?? ""
-        
-        if ((textField.text?.isEmpty) != nil) {
-            textField.textColor = .secondaryLabel
-            textField.text = "글 제목을 입력해주세요 😀"
-        }
-        
+    // 플레이스홀더 텍스트 설정
+    private func setTextFieldPlaceholder(_ textField: UITextField) {
+        textField.text = "글 제목을 입력해주세요 😀"
+        textField.textColor = .secondaryLabel
     }
     
+    private func setTextViewPlaceholder(_ textView: UITextView) {
+        textView.text = "오늘 하루는 어땠나요? 😀"
+        textView.textColor = .secondaryLabel
+    }
+    
+    // 제목 입력 완료 시 (텍스트 필드)
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let text = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        viewModel.userFeed.title = text
+        
+        if text.isEmpty {
+            setTextFieldPlaceholder(textField)
+        }
+    }
+    
+    // 제목 입력 시작 시 (플레이스홀더 제거)
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        if textField.textColor == .secondaryLabel {
+        if textField.text == "글 제목을 입력해주세요 😀" {
             textField.text = ""
             textField.textColor = .label
         }
     }
     
-    // 내용 변경 시
+    // 내용 변경 시 (텍스트 뷰)
     func textViewDidChange(_ textView: UITextView) {
-        viewModel.userFeed.contents = textView.text
-        
-        if textView.text.isEmpty {
-            textView.textColor = .secondaryLabel
-            textView.text = "오늘 하루는 어땠나요? 😀"
-        }
+        let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        viewModel.userFeed.contents = text
     }
     
+    // 내용 입력 시작 시 (플레이스홀더 제거)
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == .secondaryLabel {
+        if textView.text == "오늘 하루는 어땠나요? 😀" {
             textView.text = ""
             textView.textColor = .label
         }
     }
+    
+    // 내용 입력 종료 시 (빈 경우 플레이스홀더 추가)
+    func textViewDidEndEditing(_ textView: UITextView) {
+        let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if text.isEmpty {
+            setTextViewPlaceholder(textView)
+        }
+    }
+}
+
+
+enum EditMode {
+    case create   // 새 피드 생성
+    case edit(FeedItem, [UIImage])    // 기존 피드 수정
 }

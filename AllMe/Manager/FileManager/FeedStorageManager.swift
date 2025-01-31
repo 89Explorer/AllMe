@@ -21,15 +21,14 @@ class FeedStorageManager {
     
     /// 이미지를 저장하고 경로를 반환하는 함수
     func saveImages(images: [UIImage], feedID: String) -> [String] {
-        
         let feedFolder = getDocumentsDirectory().appendingPathComponent(feedID)
         
-        // 폴더가 없다면? 생성
-        if !FileManager.default.fileExists(atPath: feedFolder.path) {
-            try? FileManager.default.createDirectory(at: feedFolder,
-                                                     withIntermediateDirectories: true,
-                                                     attributes: nil)
+        // ✅ 기존 이미지 삭제
+        if FileManager.default.fileExists(atPath: feedFolder.path) {
+            try? FileManager.default.removeItem(at: feedFolder)
         }
+        
+        try? FileManager.default.createDirectory(at: feedFolder, withIntermediateDirectories: true, attributes: nil)
         
         var savedImagesPaths: [String] = []
         
@@ -39,17 +38,41 @@ class FeedStorageManager {
             
             if let imageData = image.jpegData(compressionQuality: 1.0) {
                 try? imageData.write(to: fileURL)
-                
-                // feedID/파일명 형태의 상대 경로 저장
                 savedImagesPaths.append("\(feedID)/\(fileName)")
             }
         }
         return savedImagesPaths
     }
+    //    func saveImages(images: [UIImage], feedID: String) -> [String] {
+    //
+    //        let feedFolder = getDocumentsDirectory().appendingPathComponent(feedID)
+    //
+    //        // 폴더가 없다면? 생성
+    //        if !FileManager.default.fileExists(atPath: feedFolder.path) {
+    //            try? FileManager.default.createDirectory(at: feedFolder,
+    //                                                     withIntermediateDirectories: true,
+    //                                                     attributes: nil)
+    //        }
+    //
+    //        var savedImagesPaths: [String] = []
+    //
+    //        for (index, image) in images.enumerated() {
+    //            let fileName = "image_\(index).jpg"
+    //            let fileURL = feedFolder.appendingPathComponent(fileName)
+    //
+    //            if let imageData = image.jpegData(compressionQuality: 1.0) {
+    //                try? imageData.write(to: fileURL)
+    //
+    //                // feedID/파일명 형태의 상대 경로 저장
+    //                savedImagesPaths.append("\(feedID)/\(fileName)")
+    //            }
+    //        }
+    //        return savedImagesPaths
+    //    }
     
     /// 저장한 이미지를 상대경로로 불러옴
     func loadImages(from relativePaths: [String]) -> [UIImage] {
-       
+        
         var images: [UIImage] = []
         
         for relativePath in relativePaths {
@@ -61,7 +84,7 @@ class FeedStorageManager {
         // print("load image: \(images)")
         return images
     }
-
+    
     /// 저장한 이미지를 삭제하는 함수
     func deleteImages(from relativePaths: [String]) {
         for relativePath in relativePaths {
