@@ -24,7 +24,11 @@
 
 
 ## 🎥 시연 영상
+<p align="center">
 <img src="https://github.com/user-attachments/assets/e223cd83-ea6d-41cb-b8af-847f905de235" height="400"/>
+<img src="https://github.com/user-attachments/assets/bdf50751-d78a-403b-81d1-e47bd7c2bcf2" height="400"/>
+</p>
+
 
 
 ## 🔧 앱 개발 환경
