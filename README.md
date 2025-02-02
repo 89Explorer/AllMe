@@ -64,7 +64,7 @@
 
 DailyNote를 만들면서 겪었던 불편함이 "유지보수" 입니다. 
 
-이번에 AllMe는 개인 피드 관리하는 앱으로, 이전의 DailyNote와 동일한 기능을 합니다. 다만, DailyNote를 만들면서 겪었떤 유지보수 및 UI 업데이트 부분을 Combine과 MVVM을 활용하여 데이터 관리를 효율적으로 수행하는데 초점을 맞추어 개발되었습니다. 🚀
+이번에 AllMe는 개인 피드 관리하는 앱으로, 이전의 DailyNote와 동일한 기능을 합니다. 다만, DailyNote를 만들면서 겪었떤 유지보수 및 UI 업데이트 부분을 ${\textsf{\color{green}Combine + MVVM}}$ 을 활용하여 데이터 관리를 효율적으로 수행하는데 초점을 맞추어 개발되었습니다. 🚀
 
 
 📌 MVC에서 발생하는 문제 (DailyNote)
