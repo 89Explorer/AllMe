@@ -227,6 +227,7 @@ class FeedViewController: UIViewController {
 
 - MVC (DailyNote) → CoreData 로직을 수정하면 모든 ViewController에서 직접 수정 필요 ❌
 - MVVM + Combine (AllMe) → CoreData 로직이 수정되어도 ViewModel만 변경하면 자동 반영 ✅
+- ViewModel을 활용한 CRUD 연산 → ViewController가 데이터 처리 로직에서 분리 ✅
 
 
 
